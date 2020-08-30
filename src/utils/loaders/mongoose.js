@@ -20,8 +20,6 @@ export const mongooseLoader = async () => {
    db.on('error', console.error.bind(console, 'connection error:'));
 
    db.once('open', async () => {
-      console.info('Database connected!');
-
       const hasAdminAccount = await User.findOne({ role: USER_ROLES.ADMIN });
 
       if (!hasAdminAccount) {

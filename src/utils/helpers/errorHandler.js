@@ -17,3 +17,16 @@ export const handleError = (err, res) => {
       message,
    });
 };
+
+export const customExpressErrorHandler = (err, req, res, next) => {
+   if (err instanceof ErrorHandler) {
+      handleError(err, res);
+   } else {
+      const error = new ErrorHandler(
+         StatusCodes.INTERNAL_SERVER_ERROR,
+         'Server error',
+      );
+
+      handleError(error, res);
+   }
+};

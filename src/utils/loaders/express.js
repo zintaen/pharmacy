@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 
 import config from '~/config';
 import appRouter from '~/routes';
-import { handleError } from '~/utils/helpers/errorHandler';
+import { customExpressErrorHandler } from '~/utils/helpers/errorHandler';
 
 export const expressLoader = async (app) => {
    app.use(bodyParser.json());
@@ -13,11 +13,9 @@ export const expressLoader = async (app) => {
 
    // Custom default error handle middleware (Need to keep 4 parameters)
    // Read more: https://expressjs.com/en/guide/error-handling.html
-   app.use((err, req, res, next) => {
-      handleError(err, res);
-   });
+   app.use(customExpressErrorHandler);
 
-   app.listen(config.PORT, () => {
-      console.log(`Server is listening at http://localhost:${config.PORT}`);
-   });
+   if (config.ENV !== 'test') {
+      app.listen(config.PORT, () => console.info(`Server started at http://localhost:${config.PORT}`));
+   }
 };

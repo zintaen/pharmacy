@@ -8,7 +8,7 @@ const drugSchema = new Schema(
          required: true,
       },
       price: {
-         type: Schema.Types.String,
+         type: Schema.Types.Number,
          required: true,
       },
       description: Schema.Types.String,

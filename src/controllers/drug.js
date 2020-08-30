@@ -9,12 +9,7 @@ export default {
          const records = await Model.find();
          res.json(records);
       } catch (e) {
-         next(
-            new ErrorHandler(
-               StatusCodes.INTERNAL_SERVER_ERROR,
-               'Fail to fetch!',
-            ),
-         );
+         next(e);
       }
    },
 
@@ -23,12 +18,7 @@ export default {
          const record = await Model.findById(req.params.id);
          res.json(record);
       } catch (e) {
-         next(
-            new ErrorHandler(
-               StatusCodes.INTERNAL_SERVER_ERROR,
-               'Fail to fetch!',
-            ),
-         );
+         next(e);
       }
    },
 
@@ -41,12 +31,7 @@ export default {
 
          res.json(record);
       } catch (e) {
-         next(
-            new ErrorHandler(
-               StatusCodes.INTERNAL_SERVER_ERROR,
-               'Fail to create new product',
-            ),
-         );
+         next(e);
       }
    },
 
@@ -56,14 +41,15 @@ export default {
 
       try {
          const record = await Model.findByIdAndUpdate(id, body, { new: true });
-         res.json(record);
+
+         if (record) {
+            res.json(record);
+            return;
+         }
+
+         throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Drug not found');
       } catch (e) {
-         next(
-            new ErrorHandler(
-               StatusCodes.INTERNAL_SERVER_ERROR,
-               'Fail to update product',
-            ),
-         );
+         next(e);
       }
    },
 
@@ -72,14 +58,15 @@ export default {
 
       try {
          const record = await Model.findByIdAndDelete(id);
-         res.json(record);
+
+         if (record) {
+            res.json(record);
+            return;
+         }
+
+         throw new ErrorHandler(StatusCodes.NOT_FOUND, 'Drug does not exist!');
       } catch (e) {
-         next(
-            new ErrorHandler(
-               StatusCodes.INTERNAL_SERVER_ERROR,
-               'Fail to delete product',
-            ),
-         );
+         next(e);
       }
    },
 };

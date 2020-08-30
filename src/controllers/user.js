@@ -13,11 +13,7 @@ export default {
 
          res.json(record);
       } catch (e) {
-         const resError = new ErrorHandler(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            e,
-         );
-         next(resError);
+         next(e);
       }
    },
 
@@ -29,10 +25,13 @@ export default {
 
          if (user) {
             const response = await user.login(password);
-            res.json(response);
+            return res.json(response);
          }
 
-         throw new ErrorHandler(StatusCodes.NOT_FOUND, 'User not found');
+         throw new ErrorHandler(
+            StatusCodes.FORBIDDEN,
+            'Login information wrong',
+         );
       } catch (e) {
          next(e);
       }
@@ -42,15 +41,11 @@ export default {
       const { user } = req;
 
       if (user) {
-         res.json(user);
-      } else {
-         const resError = new ErrorHandler(
-            StatusCodes.NOT_FOUND,
-            'User not found',
-         );
-
-         next(resError);
+         const userData = user.removeProtectedFields();
+         return res.json(userData);
       }
+
+      throw new ErrorHandler(StatusCodes.NOT_FOUND, 'User not found');
    },
 
    update: async (req, res, next) => {
@@ -77,12 +72,7 @@ export default {
          await user.save();
          res.json(user.removeProtectedFields());
       } catch (e) {
-         const resError = new ErrorHandler(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-            'Fail to update user',
-         );
-
-         next(resError);
+         next(e);
       }
    },
 };
